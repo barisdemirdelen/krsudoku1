@@ -185,6 +185,9 @@ if __name__ == '__main__':
         deviations[i] = numpy.std(current_deviations)
         means[i] = numpy.mean(current_deviations)
 
+    numpy.savetxt('means.out', means, delimiter=',')   # X is an array
+    numpy.savetxt('deviations.out', deviations, delimiter=',')
+    numpy.savetxt('solve_times.out',solve_times, delimiter=',')
     # print solve_time
     plt.plot(means)
     plt.show()
