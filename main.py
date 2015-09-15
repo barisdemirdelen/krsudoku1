@@ -18,8 +18,8 @@ import matplotlib.pyplot as plt
 
 solve_time = numpy.zeros(82)
 solve_times = []
-single_solve_count = 10
-iteration_count = 10
+single_solve_count = 1
+iteration_count = 1000
 
 
 def v(i, j, d):
@@ -89,12 +89,16 @@ def solve(grid, current_number):
     # solve the SAT problem
     start = time.time()
     for m in range(single_solve_count):
-        pycosat.solve(clauses)
+        sol = pycosat.solve(clauses)
     end = time.time()
     solve_times.append(end - start)
     solve_time[current_number] += (end - start)
-    sol = set(pycosat.solve(clauses))
+    """proper = is_proper(clauses)
+    solve_times.append(proper)
+    solve_time[current_number] += proper
+    sol = set(pycosat.solve(clauses))"""
 
+    # if proper:
     def read_cell(i, j):
         # return the digit of cell i, j according to the solution
         for d in range(1, 10):
@@ -104,6 +108,15 @@ def solve(grid, current_number):
     for i in range(1, 10):
         for j in range(1, 10):
             grid[i - 1][j - 1] = read_cell(i, j)
+
+
+def is_proper(clauses):
+    sol = pycosat.solve(clauses)
+    clauses.append([-x for x in sol])
+    sol = pycosat.solve(clauses)
+    if isinstance(sol, list):
+        return False
+    return True
 
 
 if __name__ == '__main__':
@@ -120,15 +133,21 @@ if __name__ == '__main__':
             [5, 0, 0, 0, 0, 9, 0, 0, 0],
             [0, 0, 0, 0, 0, 0, 0, 4, 0]]"""""
 
-    """hard = numpy.array([[0, 2, 0, 0, 0, 0, 0, 0, 0],
-                        [0, 0, 0, 6, 0, 0, 0, 0, 3],
-                        [0, 0, 4, 0, 0, 0, 0, 0, 0],
-                        [0, 0, 0, 0, 0, 0, 0, 0, 2],
-                        [0, 8, 0, 0, 0, 0, 0, 1, 0],
-                        [6, 0, 0, 0, 0, 0, 0, 0, 0],
-                        [0, 0, 0, 0, 0, 0, 0, 0, 0],
-                        [0, 0, 0, 0, 0, 0, 0, 0, 0],
-                        [0, 0, 0, 0, 0, 0, 0, 0, 0]])"""
+    first = numpy.array([[0, 2, 0, 0, 0, 0, 0, 0, 0],
+                         [0, 0, 0, 6, 0, 0, 0, 0, 3],
+                         [0, 0, 4, 0, 0, 0, 0, 0, 0],
+                         [0, 0, 0, 0, 0, 0, 0, 0, 2],
+                         [0, 8, 0, 0, 0, 0, 0, 1, 0],
+                         [6, 0, 0, 0, 0, 0, 0, 0, 0],
+                         [0, 0, 0, 0, 0, 0, 0, 0, 0],
+                         [0, 0, 0, 0, 0, 0, 0, 0, 0],
+                         [0, 0, 0, 0, 0, 0, 0, 0, 0]])
+
+    solve(first, 0)
+    pprint(first)
+
+    solve_time = numpy.zeros(82)
+    solve_times = []
 
     """rows = []
     total_chance = 0
@@ -145,17 +164,27 @@ if __name__ == '__main__':
             if random.randint(1,total_chance) == 1:
 
             total_chance -= len(cols)"""
+    """hard = [[5, 3, 7, 4, 2, 1, 8, 9, 6],
+            [6, 9, 4, 8, 3, 7, 2, 1, 5],
+            [2, 1, 8, 9, 6, 5, 7, 4, 3],
+            [1, 6, 9, 3, 8, 4, 5, 2, 7],
+            [8, 2, 5, 1, 7, 9, 3, 6, 4],
+            [7, 4, 3, 6, 5, 2, 1, 8, 9],
+            [4, 8, 6, 7, 1, 3, 9, 5, 2],
+            [9, 7, 2, 5, 4, 8, 6, 3, 1],
+            [3, 5, 1, 2, 9, 6, 4, 7, 8]]"""
 
     for current_iteration in range(iteration_count):
-        hard = [[5, 3, 7, 4, 2, 1, 8, 9, 6],
-                [6, 9, 4, 8, 3, 7, 2, 1, 5],
-                [2, 1, 8, 9, 6, 5, 7, 4, 3],
-                [1, 6, 9, 3, 8, 4, 5, 2, 7],
-                [8, 2, 5, 1, 7, 9, 3, 6, 4],
-                [7, 4, 3, 6, 5, 2, 1, 8, 9],
-                [4, 8, 6, 7, 1, 3, 9, 5, 2],
-                [9, 7, 2, 5, 4, 8, 6, 3, 1],
-                [3, 5, 1, 2, 9, 6, 4, 7, 8]]
+        """ hard = [[5, 3, 7, 4, 2, 1, 8, 9, 6],
+                 [6, 9, 4, 8, 3, 7, 2, 1, 5],
+                 [2, 1, 8, 9, 6, 5, 7, 4, 3],
+                 [1, 6, 9, 3, 8, 4, 5, 2, 7],
+                 [8, 2, 5, 1, 7, 9, 3, 6, 4],
+                 [7, 4, 3, 6, 5, 2, 1, 8, 9],
+                 [4, 8, 6, 7, 1, 3, 9, 5, 2],
+                 [9, 7, 2, 5, 4, 8, 6, 3, 1],
+                 [3, 5, 1, 2, 9, 6, 4, 7, 8]]"""
+        hard = numpy.copy(first)
         current_number = 0
         current = numpy.copy(hard)
         solve(current, current_number)
@@ -174,22 +203,22 @@ if __name__ == '__main__':
 
         print solve_time
 
-    deviations = numpy.zeros(82)
-    means = numpy.zeros(82)
-    for i in range(82):
-        j = i
-        current_deviations = []
-        while j < len(solve_times):
-            current_deviations.append(solve_times[j])
-            j += 82
-        deviations[i] = numpy.std(current_deviations)
-        means[i] = numpy.mean(current_deviations)
+deviations = numpy.zeros(82)
+means = numpy.zeros(82)
+for i in range(82):
+    j = i
+    current_deviations = []
+    while j < len(solve_times):
+        current_deviations.append(solve_times[j])
+        j += 82
+    deviations[i] = numpy.std(current_deviations)
+    means[i] = numpy.mean(current_deviations)
 
-    numpy.savetxt('means.out', means, delimiter=',')   # X is an array
-    numpy.savetxt('deviations.out', deviations, delimiter=',')
-    numpy.savetxt('solve_times.out',solve_times, delimiter=',')
-    # print solve_time
-    plt.plot(means)
-    plt.show()
-    plt.plot(deviations)
-    plt.show()
+numpy.savetxt('means.out', means, delimiter=',')  # X is an array
+numpy.savetxt('deviations.out', deviations, delimiter=',')
+numpy.savetxt('solve_times.out', solve_times, delimiter=',')
+# print solve_time
+plt.plot(means)
+plt.show()
+plt.plot(deviations)
+plt.show()
